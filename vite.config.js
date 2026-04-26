@@ -6,15 +6,17 @@ export default defineConfig({
   base: "./",
   server: {
     proxy: {
-      "/api": "http://localhost:8787"
+      "/api": "http://localhost:8888" // Update to match your server port if changed
     }
   },
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ["react", "react-dom"],
-          three: ["three"]
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) return 'react';
+            if (id.includes('three')) return 'three';
+          }
         }
       }
     }
