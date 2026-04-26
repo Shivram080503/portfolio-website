@@ -161,7 +161,17 @@ app.get("/api/feedbacks", async (req, res) => {
   }
 });
 
-app.use(express.static(distDir));
+// Serve static files with no-cache headers for HTML
+app.use(express.static(distDir, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.setHeader('Surrogate-Control', 'no-store');
+    }
+  }
+}));
 app.get("*", async (req, res, next) => {
   if (req.path.startsWith("/api")) {
     return next();
